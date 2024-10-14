@@ -2,6 +2,6 @@ version: '3.9'
 
 services:
   web:
-    image: "698subhashchandra/node-cicd1:latest"
+    build: .  # This will build the image from the Dockerfile in the current directory
     ports:
       - "8000:8000"
