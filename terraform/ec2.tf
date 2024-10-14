@@ -74,11 +74,11 @@ resource "aws_instance" "testinstance" {
   subnet_id             = data.aws_subnet.default.id
 
   tags = {
-    Name = "Automate"
+    Name = "Master-Server"
   }
 
   root_block_device {
-    volume_size = 30
+    volume_size = 15
     volume_type = "gp3"
   }
 }
