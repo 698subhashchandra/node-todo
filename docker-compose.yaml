@@ -1,0 +1,7 @@
+version: '3.9'
+
+services:
+  web:
+    image: "698subhashchandra/node-cicd1:latest"
+    ports:
+      - "8000:8000"
