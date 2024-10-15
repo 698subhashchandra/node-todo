@@ -35,4 +35,4 @@ spec:
     - port: 8000
       targetPort: 8000
       protocol: TCP
-      nodePort: 8000
+      nodePort: 30080 # NodePort must be between 30000 and 32767
