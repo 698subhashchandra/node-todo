@@ -4,7 +4,7 @@ pipeline {
 
     environment {
         SONAR_HOME = tool "Sonar"
-        GIT_REPO_URL = "https://github.com/698subhashchandra/Wanderlust-Mega-Project.git"
+        GIT_REPO_URL = "https://github.com/698subhashchandra/node-todo.git"
         GIT_BRANCH = "main"
         DOCKER_USER = "698subhashchandra"
         BACKEND_IMAGE = "wanderlust-backend-beta"
@@ -13,7 +13,7 @@ pipeline {
 
     parameters {
         string(name: 'FRONTEND_DOCKER_TAG', defaultValue: '', description: 'Setting docker image for latest push')
-        string(name: 'BACKEND_DOCKER_TAG', defaultValue: '', description: 'Setting docker image for latest push')
+
     }
 
     stages {
@@ -77,15 +77,7 @@ pipeline {
 
         stage('Exporting environment variables') {
             parallel {
-                stage("Backend env setup") {
-                    steps {
-                        script {
-                            dir("Automations") {
-                                sh "bash updatebackendnew.sh"
-                            }
-                        }
-                    }
-                }
+
 
                 stage("Frontend env setup") {
                     steps {
@@ -102,9 +94,7 @@ pipeline {
         stage("Docker: Build Images") {
             steps {
                 script {
-                    dir('backend') {
-                        docker_build("${env.BACKEND_IMAGE}", "${params.BACKEND_DOCKER_TAG}", "${env.DOCKER_USER}")
-                    }
+
 
                     dir('frontend') {
                         docker_build("${env.FRONTEND_IMAGE}", "${params.FRONTEND_DOCKER_TAG}", "${env.DOCKER_USER}")
@@ -116,7 +106,7 @@ pipeline {
         stage("Docker: Push to DockerHub") {
             steps {
                 script {
-                    docker_push("${env.BACKEND_IMAGE}", "${params.BACKEND_DOCKER_TAG}", "${env.DOCKER_USER}")
+
                     docker_push("${env.FRONTEND_IMAGE}", "${params.FRONTEND_DOCKER_TAG}", "${env.DOCKER_USER}")
                 }
             }
@@ -127,8 +117,8 @@ pipeline {
         success {
             archiveArtifacts artifacts: '*.xml', followSymlinks: false
             build job: "Wanderlust-CD", parameters: [
-                string(name: 'FRONTEND_DOCKER_TAG', value: "${params.FRONTEND_DOCKER_TAG}"),
-                string(name: 'BACKEND_DOCKER_TAG', value: "${params.BACKEND_DOCKER_TAG}")
+                string(name: 'FRONTEND_DOCKER_TAG', value: "${params.FRONTEND_DOCKER_TAG}")
+
             ]
         }
     }
