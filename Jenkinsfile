@@ -4,24 +4,18 @@ pipeline {
 
     environment {
         SONAR_HOME = tool "Sonar"
-        GIT_REPO_URL = "https://github.com/698subhashchandra/node-todo.git"
-        GIT_BRANCH = "main"
-        DOCKER_USER = "698subhashchandra"
-        BACKEND_IMAGE = "wanderlust-backend-beta"
-        FRONTEND_IMAGE = "wanderlust-frontend-beta"
     }
 
     parameters {
         string(name: 'FRONTEND_DOCKER_TAG', defaultValue: '', description: 'Setting docker image for latest push')
-
     }
 
     stages {
         stage("Validate Parameters") {
             steps {
                 script {
-                    if (params.FRONTEND_DOCKER_TAG == '' || params.BACKEND_DOCKER_TAG == '') {
-                        error("FRONTEND_DOCKER_TAG and BACKEND_DOCKER_TAG must be provided.")
+                    if (params.FRONTEND_DOCKER_TAG == '') {
+                        error("FRONTEND_DOCKER_TAG must be provided.")
                     }
                 }
             }
@@ -38,7 +32,7 @@ pipeline {
         stage('Git: Code Checkout') {
             steps {
                 script {
-                    code_checkout("${env.GIT_REPO_URL}", "${env.GIT_BRANCH}")
+                    code_checkout("https://github.com/698subhashchandra/node-todo.git", "main")
                 }
             }
         }
@@ -62,7 +56,7 @@ pipeline {
         stage("SonarQube: Code Analysis") {
             steps {
                 script {
-                    sonarqube_analysis("${env.SONAR_HOME}", "wanderlust", "wanderlust")
+                    sonarqube_analysis("Sonar", "wanderlust", "wanderlust")
                 }
             }
         }
@@ -76,15 +70,11 @@ pipeline {
         }
 
         stage('Exporting environment variables') {
-            parallel {
-
-
-                stage("Frontend env setup") {
-                    steps {
-                        script {
-                            dir("Automations") {
-                                sh "bash updatefrontendnew.sh"
-                            }
+            stage("Frontend env setup") {
+                steps {
+                    script {
+                        dir("Automations") {
+                            sh "bash updatefrontendnew.sh"
                         }
                     }
                 }
@@ -94,10 +84,8 @@ pipeline {
         stage("Docker: Build Images") {
             steps {
                 script {
-
-
                     dir('frontend') {
-                        docker_build("${env.FRONTEND_IMAGE}", "${params.FRONTEND_DOCKER_TAG}", "${env.DOCKER_USER}")
+                        docker_build("wanderlust-frontend-beta", "${params.FRONTEND_DOCKER_TAG}", "698subhashchandra")
                     }
                 }
             }
@@ -106,8 +94,7 @@ pipeline {
         stage("Docker: Push to DockerHub") {
             steps {
                 script {
-
-                    docker_push("${env.FRONTEND_IMAGE}", "${params.FRONTEND_DOCKER_TAG}", "${env.DOCKER_USER}")
+                    docker_push("wanderlust-frontend-beta", "${params.FRONTEND_DOCKER_TAG}", "698subhashchandra")
                 }
             }
         }
@@ -118,7 +105,6 @@ pipeline {
             archiveArtifacts artifacts: '*.xml', followSymlinks: false
             build job: "Wanderlust-CD", parameters: [
                 string(name: 'FRONTEND_DOCKER_TAG', value: "${params.FRONTEND_DOCKER_TAG}")
-
             ]
         }
     }
