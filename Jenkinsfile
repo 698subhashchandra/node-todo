@@ -23,9 +23,7 @@ pipeline {
 
         stage("Workspace cleanup") {
             steps {
-                script {
-                    cleanWs()
-                }
+                cleanWs()
             }
         }
 
@@ -69,13 +67,11 @@ pipeline {
             }
         }
 
-        stage('Exporting environment variables') {
-            stage("Frontend env setup") {
-                steps {
-                    script {
-                        dir("Automations") {
-                            sh "bash updatefrontendnew.sh"
-                        }
+        stage("Frontend env setup") {  // Merged stage
+            steps {
+                script {
+                    dir("Automations") {
+                        sh "bash updatefrontendnew.sh"
                     }
                 }
             }
