@@ -4,9 +4,9 @@ pipeline {
 
     environment {
         GITHUB_CREDENTIALS_ID = 'Github-cred'
-        GITHUB_REPO_URL = 'https://github.com/698subhashchandra/Wanderlust-Mega-Project.git'
+        GITHUB_REPO_URL = 'https://github.com/698subhashchandra/node-todo.git'
         GITHUB_BRANCH = 'main'
-        BACKEND_IMAGE_NAME = 'wanderlust-backend-beta'
+
         FRONTEND_IMAGE_NAME = 'wanderlust-frontend-beta'
         NOTIFICATION_EMAIL = '910jpyadav@gmail.com'
         KUBERNETES_DIR = 'kubernetes'
@@ -14,7 +14,7 @@ pipeline {
 
     parameters {
         string(name: 'FRONTEND_DOCKER_TAG', defaultValue: '', description: 'Frontend Docker tag of the image built by the CI job')
-        string(name: 'BACKEND_DOCKER_TAG', defaultValue: '', description: 'Backend Docker tag of the image built by the CI job')
+
     }
 
     stages {
@@ -44,7 +44,7 @@ pipeline {
         stage("Update: Kubernetes manifests") {
             steps {
                 script {
-                    def backend_image = "${BACKEND_IMAGE_NAME}:${params.BACKEND_DOCKER_TAG}"
+
                     def frontend_image = "${FRONTEND_IMAGE_NAME}:${params.FRONTEND_DOCKER_TAG}"
 
                     dir(KUBERNETES_DIR) {
