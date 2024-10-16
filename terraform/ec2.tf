@@ -1,7 +1,7 @@
-
 resource "aws_key_pair" "deployer" {
   key_name   = "terra-automate-key"
-  public_key = file("/home/vikash/PycharmProjects/Wanderlust-Mega-Project/terraform/terra-key.pub")
+  public_key = file("/home/vikash/node-cicd.pub")
+
 }
 
 resource "aws_default_vpc" "default" {
@@ -17,7 +17,7 @@ resource "aws_security_group" "allow_user_to_connect" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/24"]
   }
 
   egress {
@@ -78,7 +78,7 @@ resource "aws_instance" "testinstance" {
   }
 
   root_block_device {
-    volume_size = 15
+    volume_size = 10
     volume_type = "gp3"
   }
 }
